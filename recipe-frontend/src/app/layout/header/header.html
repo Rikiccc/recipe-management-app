@@ -1,0 +1,24 @@
+<mat-toolbar color="primary" class="header">
+  <a routerLink="/home" class="logo"><mat-icon>restaurant</mat-icon><span>Recepti</span></a>
+
+  <nav class="links">
+    <a mat-button routerLink="/home" routerLinkActive="active">Početna</a>
+    <a mat-button routerLink="/search" routerLinkActive="active">Pretraga</a>
+    <a mat-button routerLink="/map" routerLinkActive="active">Mapa</a>
+  </nav>
+
+  <span class="spacer"></span>
+
+  <button mat-icon-button aria-label="Notifikacije"><mat-icon>notifications</mat-icon></button>
+  <a mat-button routerLink="/auth/login" class="auth-btn">Prijava</a>
+  <a mat-flat-button routerLink="/auth/register" class="auth-btn">Registracija</a>
+
+  <button mat-icon-button class="menu-btn" [matMenuTriggerFor]="menu" aria-label="Meni"><mat-icon>menu</mat-icon></button>
+  <mat-menu #menu="matMenu">
+    <a mat-menu-item routerLink="/home">Početna</a>
+    <a mat-menu-item routerLink="/search">Pretraga</a>
+    <a mat-menu-item routerLink="/map">Mapa</a>
+    <a mat-menu-item routerLink="/auth/login">Prijava</a>
+    <a mat-menu-item routerLink="/auth/register">Registracija</a>
+  </mat-menu>
+</mat-toolbar>
