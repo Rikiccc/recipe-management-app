@@ -1,0 +1,66 @@
+.home {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
+}
+
+.intro {
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0 0 4px;
+    font-size: 28px;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0;
+    color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  margin-bottom: 24px;
+  border-radius: 16px;
+  font-size: 14px;
+  background: #eeeeee;
+
+  &.online {
+    background: #e6f4ea;
+    color: #1e7a34;
+  }
+
+  &.offline {
+    background: #fdecea;
+    color: #b3261e;
+  }
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 48px 0;
+}
+
+.error-card p {
+  margin: 0 0 12px;
+}
+
+.lookup-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+mat-card-content {
+  padding-top: 12px;
+}
+
+.empty {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 14px;
+}
