@@ -1,1 +1,54 @@
-<p>home works!</p>
+<section class="home">
+  <header class="intro">
+    <h1>Dobrodošli u aplikaciju za recepte</h1>
+    <p>Pronađite recept, sačuvajte svoje i vodite evidenciju namirnica.</p>
+  </header>
+
+  <div class="status" [class.online]="health()" [class.offline]="!health() && !loading()">
+    <mat-icon>{{ health() ? 'cloud_done' : 'cloud_off' }}</mat-icon>
+    @if (health(); as h) {
+      <span>Backend: {{ h.message }}</span>
+    } @else if (loading()) {
+      <span>Povezivanje sa serverom...</span>
+    } @else {
+      <span>Backend nije dostupan.</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="center">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+  } @else if (error()) {
+    <mat-card class="error-card" appearance="outlined">
+      <mat-card-content>
+        <p>{{ error() }}</p>
+        <button mat-stroked-button (click)="load()">
+          <mat-icon>refresh</mat-icon>
+          Pokušaj ponovo
+        </button>
+      </mat-card-content>
+    </mat-card>
+  } @else {
+    <div class="lookup-grid">
+      @for (group of groups(); track group.title) {
+        <mat-card appearance="outlined">
+          <mat-card-header>
+            <mat-icon mat-card-avatar>{{ group.icon }}</mat-icon>
+            <mat-card-title>{{ group.title }}</mat-card-title>
+            <mat-card-subtitle>{{ group.items.length }} stavki</mat-card-subtitle>
+          </mat-card-header>
+          <mat-card-content>
+            <mat-chip-set aria-label="{{ group.title }}">
+              @for (item of group.items; track item.id) {
+                <mat-chip>{{ item.name }}</mat-chip>
+              } @empty {
+                <span class="empty">Nema podataka.</span>
+              }
+            </mat-chip-set>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</section>
