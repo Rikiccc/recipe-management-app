@@ -1,0 +1,56 @@
+.admin-container {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 0 16px;
+}
+
+.admin-header {
+  margin-bottom: 16px;
+
+  h1 {
+    margin: 0 0 4px 0;
+    font-size: 24px;
+    font-weight: 600;
+  }
+
+  p {
+    margin: 0;
+    color: #666;
+  }
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0 12px 0;
+  flex-wrap: wrap;
+}
+
+.search-field {
+  min-width: 280px;
+  flex: 1;
+  max-width: 420px;
+}
+
+.table-wrapper {
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+
+  table {
+    width: 100%;
+  }
+}
+
+.actions-col {
+  width: 120px;
+  text-align: right;
+}
+
+.empty-cell {
+  padding: 24px;
+  text-align: center;
+  color: #777;
+}
