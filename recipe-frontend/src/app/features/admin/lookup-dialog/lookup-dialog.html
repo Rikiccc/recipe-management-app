@@ -1,0 +1,15 @@
+<h2 mat-dialog-title>{{ data.title }}</h2>
+<mat-dialog-content class="dialog-content">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>{{ data.label }}</mat-label>
+    <input matInput [formControl]="nameControl" placeholder="Unesite naziv..." />
+    <mat-error *ngIf="nameControl.hasError('required')">Naziv je obavezan.</mat-error>
+    <mat-error *ngIf="nameControl.hasError('minlength')">Minimum 2 karaktera.</mat-error>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Otkaži</button>
+  <button mat-flat-button color="primary" [disabled]="nameControl.invalid" (click)="onSave()">
+    Sačuvaj
+  </button>
+</mat-dialog-actions>
