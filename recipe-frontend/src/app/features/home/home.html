@@ -1,54 +1,91 @@
 <section class="home">
-  <header class="intro">
-    <h1>Dobrodošli u aplikaciju za recepte</h1>
-    <p>Pronađite recept, sačuvajte svoje i vodite evidenciju namirnica.</p>
+  <header class="hero">
+    <div>
+      <h1>Šta danas kuvamo?</h1>
+      <p>Pronađite omiljeni recept, istražite nove ukuse i iskoristite namirnice koje već imate.</p>
+    </div>
+    <a mat-flat-button routerLink="/search">
+      <mat-icon>search</mat-icon>
+      Pretraži recepte
+    </a>
   </header>
 
-  <div class="status" [class.online]="health()" [class.offline]="!health() && !loading()">
-    <mat-icon>{{ health() ? 'cloud_done' : 'cloud_off' }}</mat-icon>
-    @if (health(); as h) {
-      <span>Backend: {{ h.message }}</span>
-    } @else if (loading()) {
-      <span>Povezivanje sa serverom...</span>
-    } @else {
-      <span>Backend nije dostupan.</span>
-    }
-  </div>
+  <mat-tab-group
+    [selectedIndex]="selectedIndex()"
+    (selectedIndexChange)="onTabChange($event)"
+    animationDuration="0ms"
+    mat-stretch-tabs="false"
+  >
+    <mat-tab label="Popularni">
+      <ng-template matTabContent>
+        <p class="hint">Recepti sa najvećom prosečnom ocenom u poslednjih mesec dana.</p>
+        <ng-container
+          *ngTemplateOutlet="recipeList; context: { $implicit: popular(), tab: 'popular' }"
+        ></ng-container>
+      </ng-template>
+    </mat-tab>
 
-  @if (loading()) {
+    <mat-tab label="Najnoviji">
+      <ng-template matTabContent>
+        <p class="hint">Najskorije objavljeni recepti.</p>
+        <ng-container
+          *ngTemplateOutlet="recipeList; context: { $implicit: newest(), tab: 'newest' }"
+        ></ng-container>
+      </ng-template>
+    </mat-tab>
+
+    <mat-tab label="Mogu da pripremim">
+      <ng-template matTabContent>
+        <mat-card class="info" appearance="outlined">
+          <mat-card-content>
+            <mat-icon>kitchen</mat-icon>
+            <div>
+              <h3>Recepti od namirnica koje imate</h3>
+              <p>
+                Ovde će se prikazivati recepti koje možete odmah da pripremite na osnovu vaše
+                evidencije namirnica. Prijavite se i dodajte namirnice koje imate kod kuće.
+              </p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </ng-template>
+    </mat-tab>
+  </mat-tab-group>
+</section>
+
+<ng-template #recipeList let-state let-tab="tab">
+  @if (state.loading && !state.recipes.length) {
     <div class="center">
       <mat-spinner diameter="40"></mat-spinner>
     </div>
-  } @else if (error()) {
-    <mat-card class="error-card" appearance="outlined">
+  } @else if (state.error) {
+    <mat-card class="info error" appearance="outlined">
       <mat-card-content>
-        <p>{{ error() }}</p>
-        <button mat-stroked-button (click)="load()">
-          <mat-icon>refresh</mat-icon>
-          Pokušaj ponovo
-        </button>
+        <mat-icon>cloud_off</mat-icon>
+        <div>
+          <p>{{ state.error }}</p>
+          <button mat-stroked-button (click)="retry(tab)">
+            <mat-icon>refresh</mat-icon>
+            Pokušaj ponovo
+          </button>
+        </div>
       </mat-card-content>
     </mat-card>
+  } @else if (state.loaded && !state.recipes.length) {
+    <p class="empty">Još nema recepata za prikaz.</p>
   } @else {
-    <div class="lookup-grid">
-      @for (group of groups(); track group.title) {
-        <mat-card appearance="outlined">
-          <mat-card-header>
-            <mat-icon mat-card-avatar>{{ group.icon }}</mat-icon>
-            <mat-card-title>{{ group.title }}</mat-card-title>
-            <mat-card-subtitle>{{ group.items.length }} stavki</mat-card-subtitle>
-          </mat-card-header>
-          <mat-card-content>
-            <mat-chip-set aria-label="{{ group.title }}">
-              @for (item of group.items; track item.id) {
-                <mat-chip>{{ item.name }}</mat-chip>
-              } @empty {
-                <span class="empty">Nema podataka.</span>
-              }
-            </mat-chip-set>
-          </mat-card-content>
-        </mat-card>
+    <div class="grid" [class.dimmed]="state.loading">
+      @for (recipe of state.recipes; track recipe.id) {
+        <app-recipe-card [recipe]="recipe"></app-recipe-card>
       }
     </div>
+    <mat-paginator
+      [length]="state.total"
+      [pageIndex]="state.page"
+      [pageSize]="state.size"
+      [pageSizeOptions]="pageSizeOptions"
+      (page)="onPage(tab, $event)"
+      aria-label="Izbor stranice"
+    ></mat-paginator>
   }
-</section>
+</ng-template>

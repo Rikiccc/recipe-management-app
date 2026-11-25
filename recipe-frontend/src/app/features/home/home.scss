@@ -4,8 +4,16 @@
   padding: 24px 16px 48px;
 }
 
-.intro {
+.hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: 24px;
   margin-bottom: 16px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fff3e0, #fbe9e7);
 
   h1 {
     margin: 0 0 4px;
@@ -15,29 +23,30 @@
 
   p {
     margin: 0;
-    color: rgba(0, 0, 0, 0.6);
+    color: rgba(0, 0, 0, 0.65);
   }
 }
 
-.status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 12px;
-  margin-bottom: 24px;
-  border-radius: 16px;
+.hint {
+  margin: 16px 0 12px;
   font-size: 14px;
-  background: #eeeeee;
+  color: rgba(0, 0, 0, 0.6);
+}
 
-  &.online {
-    background: #e6f4ea;
-    color: #1e7a34;
-  }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  transition: opacity 0.2s ease;
 
-  &.offline {
-    background: #fdecea;
-    color: #b3261e;
+  &.dimmed {
+    opacity: 0.5;
   }
+}
+
+mat-paginator {
+  margin-top: 16px;
+  background: transparent;
 }
 
 .center {
@@ -46,21 +55,40 @@
   padding: 48px 0;
 }
 
-.error-card p {
-  margin: 0 0 12px;
-}
-
-.lookup-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
-}
-
-mat-card-content {
-  padding-top: 12px;
-}
-
 .empty {
-  color: rgba(0, 0, 0, 0.5);
-  font-size: 14px;
+  padding: 32px 0;
+  text-align: center;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.info {
+  margin-top: 16px;
+
+  mat-card-content {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+
+  mat-icon {
+    flex-shrink: 0;
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
+    color: #8d6e63;
+  }
+
+  h3 {
+    margin: 0 0 4px;
+    font-weight: 500;
+  }
+
+  p {
+    margin: 0 0 8px;
+    color: rgba(0, 0, 0, 0.7);
+  }
+
+  &.error mat-icon {
+    color: #b3261e;
+  }
 }
