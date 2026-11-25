@@ -33,7 +33,7 @@ export class AdminLookupService {
   }
 
   getAll(category: LookupCategoryKey): Observable<LookupItem[]> {
-    return this.http.get<LookupItem[]>(`${this.baseUrl}/lookup/${category}`);
+    return this.http.get<LookupItem[]>(`${this.baseUrl}/${category}`);
   }
 
   create(category: LookupCategoryKey, name: string): Observable<LookupItem> {
