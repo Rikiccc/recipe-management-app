@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NotFound } from './layout/not-found/not-found';
-import { AdminGuard } from './core/guards/admin.guard';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -39,7 +38,6 @@ const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate: [AdminGuard],
     loadChildren: () => import('./features/admin/admin-module').then((m) => m.AdminModule),
   },
   { path: 'map', loadChildren: () => import('./features/map/map-module').then((m) => m.MapModule) },

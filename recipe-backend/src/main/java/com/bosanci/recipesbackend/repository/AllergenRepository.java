@@ -4,5 +4,4 @@ import com.bosanci.recipesbackend.model.Allergen;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AllergenRepository extends JpaRepository<Allergen, Long> {
-    boolean existsByNameIgnoreCase(String name);
 }

@@ -4,5 +4,4 @@ import com.bosanci.recipesbackend.model.DietType;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DietTypeRepository extends JpaRepository<DietType, Long> {
-    boolean existsByNameIgnoreCase(String name);
 }
