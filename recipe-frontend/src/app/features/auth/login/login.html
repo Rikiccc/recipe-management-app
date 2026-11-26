@@ -1,0 +1,67 @@
+<mat-card class="auth-card" appearance="outlined">
+  <mat-card-header>
+    <mat-card-title>Prijava</mat-card-title>
+  </mat-card-header>
+  <mat-card-content>
+    @if (sessionExpired) {
+      <div class="notice" role="status">
+        <mat-icon>schedule</mat-icon>
+        <p>Sesija je istekla. Prijavite se ponovo.</p>
+      </div>
+    }
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <mat-form-field appearance="outline">
+        <mat-label>Korisničko ime ili e-pošta</mat-label>
+        <input matInput formControlName="usernameOrEmail" autocomplete="username" />
+        <mat-error>{{ errorOf(form.controls.usernameOrEmail) }}</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Lozinka</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          [type]="hidePassword() ? 'password' : 'text'"
+          autocomplete="current-password"
+        />
+        <button
+          mat-icon-button
+          matSuffix
+          type="button"
+          (click)="hidePassword.set(!hidePassword())"
+          [attr.aria-label]="hidePassword() ? 'Prikaži lozinku' : 'Sakrij lozinku'"
+        >
+          <mat-icon>{{ hidePassword() ? 'visibility' : 'visibility_off' }}</mat-icon>
+        </button>
+        <mat-error>{{ errorOf(form.controls.password) }}</mat-error>
+      </mat-form-field>
+
+      @if (error(); as message) {
+        <div class="notice error" role="alert">
+          <mat-icon>error_outline</mat-icon>
+          <div>
+            <p>{{ message }}</p>
+            @if (notActivated()) {
+              <a routerLink="/auth/activate">Pošalji novi link za aktivaciju</a>
+            }
+          </div>
+        </div>
+      }
+
+      <div class="actions">
+        <button mat-flat-button type="submit" [disabled]="loading()" class="submit">
+          @if (loading()) {
+            <mat-spinner diameter="20"></mat-spinner>
+          }
+          Prijavi se
+        </button>
+      </div>
+    </form>
+
+    <div class="links">
+      <a routerLink="/auth/forgot-password">Zaboravljena lozinka?</a>
+      <a routerLink="/auth/register">Nemate nalog? Registrujte se</a>
+    </div>
+  </mat-card-content>
+</mat-card>

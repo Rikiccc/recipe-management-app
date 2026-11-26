@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NotFound } from './layout/not-found/not-found';
-import { AdminGuard } from './core/guards/admin.guard';
+import { adminGuard, authGuard } from './core/auth';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -27,24 +27,28 @@ const routes: Routes = [
   },
   {
     path: 'pantry',
+    canActivate: [authGuard],
     loadChildren: () => import('./features/pantry/pantry-module').then((m) => m.PantryModule),
   },
   {
     path: 'shopping',
+    canActivate: [authGuard],
     loadChildren: () => import('./features/shopping/shopping-module').then((m) => m.ShoppingModule),
   },
   {
     path: 'reports',
+    canActivate: [authGuard],
     loadChildren: () => import('./features/reports/reports-module').then((m) => m.ReportsModule),
   },
   {
     path: 'admin',
-    canActivate: [AdminGuard],
+    canActivate: [adminGuard],
     loadChildren: () => import('./features/admin/admin-module').then((m) => m.AdminModule),
   },
   { path: 'map', loadChildren: () => import('./features/map/map-module').then((m) => m.MapModule) },
   {
     path: 'notifications',
+    canActivate: [authGuard],
     loadChildren: () =>
       import('./features/notifications/notifications-module').then((m) => m.NotificationsModule),
   },

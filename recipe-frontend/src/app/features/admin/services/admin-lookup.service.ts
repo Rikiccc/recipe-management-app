@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 export interface LookupItem {
   id: number;
@@ -18,44 +19,23 @@ export type LookupCategoryKey =
   providedIn: 'root'
 })
 export class AdminLookupService {
-  private readonly baseUrl = 'http://localhost:8080/api';
-
-  constructor(private http: HttpClient) {}
-
-  private getAdminHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      return new HttpHeaders({ Authorization: `Bearer ${token}` });
-    }
-    // Fallback za lokalno testiranje dok JWT login nije spojen (admin:admin123)
-    const basicAuth = btoa('admin:admin123');
-    return new HttpHeaders({ Authorization: `Basic ${basicAuth}` });
-  }
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = environment.apiUrl;
 
   getAll(category: LookupCategoryKey): Observable<LookupItem[]> {
     return this.http.get<LookupItem[]>(`${this.baseUrl}/${category}`);
   }
 
+  // Authorization header (Bearer JWT) is added by authInterceptor.
   create(category: LookupCategoryKey, name: string): Observable<LookupItem> {
-    return this.http.post<LookupItem>(
-      `${this.baseUrl}/admin/${category}`,
-      { name },
-      { headers: this.getAdminHeaders() }
-    );
+    return this.http.post<LookupItem>(`${this.baseUrl}/admin/${category}`, { name });
   }
 
   update(category: LookupCategoryKey, id: number, name: string): Observable<LookupItem> {
-    return this.http.put<LookupItem>(
-      `${this.baseUrl}/admin/${category}/${id}`,
-      { name },
-      { headers: this.getAdminHeaders() }
-    );
+    return this.http.put<LookupItem>(`${this.baseUrl}/admin/${category}/${id}`, { name });
   }
 
   delete(category: LookupCategoryKey, id: number): Observable<void> {
-    return this.http.delete<void>(
-      `${this.baseUrl}/admin/${category}/${id}`,
-      { headers: this.getAdminHeaders() }
-    );
+    return this.http.delete<void>(`${this.baseUrl}/admin/${category}/${id}`);
   }
 }
