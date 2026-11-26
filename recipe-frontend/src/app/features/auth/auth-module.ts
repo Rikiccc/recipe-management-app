@@ -12,9 +12,10 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthRoutingModule } from './auth-routing-module';
 import { Activate } from './activate/activate';
 import { Register } from './register/register';
+import { Login } from './login/login';
 
 @NgModule({
-  declarations: [Register, Activate],
+  declarations: [Register, Activate, Login],
   imports: [
     CommonModule,
     ReactiveFormsModule,

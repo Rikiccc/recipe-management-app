@@ -31,4 +31,15 @@ public class User {
 
     @Column(length = 1000)
     private String biography;
+
+    @Column(name = "token_version")
+    private Integer tokenVersion = 0;
+
+    public int getTokenVersion() {
+        return tokenVersion == null ? 0 : tokenVersion;
+    }
+
+    public void incrementTokenVersion() {
+        tokenVersion = getTokenVersion() + 1;
+    }
 }

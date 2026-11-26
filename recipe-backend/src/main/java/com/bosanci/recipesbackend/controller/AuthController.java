@@ -3,6 +3,7 @@ package com.bosanci.recipesbackend.controller;
 import com.bosanci.recipesbackend.dto.MessageResponse;
 import com.bosanci.recipesbackend.dto.UserDto;
 import com.bosanci.recipesbackend.dto.auth.*;
+import com.bosanci.recipesbackend.security.AuthenticatedUser;
 import com.bosanci.recipesbackend.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,5 +33,21 @@ public class AuthController {
     @PostMapping("/resend-activation")
     public MessageResponse resendActivation(@Valid @RequestBody EmailRequest request) {
         return authService.resendActivation(request.email());
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
+        return authService.login(request);
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void logout(@AuthenticationPrincipal AuthenticatedUser user) {
+        authService.logout(user);
+    }
+
+    @GetMapping("/me")
+    public UserDto me(@AuthenticationPrincipal AuthenticatedUser user) {
+        return authService.me(user.id());
     }
 }

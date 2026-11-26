@@ -4,11 +4,18 @@ import com.bosanci.recipesbackend.dto.MessageResponse;
 import com.bosanci.recipesbackend.dto.UserDto;
 import com.bosanci.recipesbackend.dto.auth.*;
 import com.bosanci.recipesbackend.exception.BadRequestException;
+import com.bosanci.recipesbackend.exception.ForbiddenException;
 import com.bosanci.recipesbackend.exception.ResourceNotFoundException;
+import com.bosanci.recipesbackend.exception.UnauthorizedException;
+import com.bosanci.recipesbackend.model.RevokedToken;
 import com.bosanci.recipesbackend.model.Role;
 import com.bosanci.recipesbackend.model.TokenType;
 import com.bosanci.recipesbackend.model.User;
+import com.bosanci.recipesbackend.repository.RevokedTokenRepository;
 import com.bosanci.recipesbackend.repository.UserRepository;
+import com.bosanci.recipesbackend.security.AuthenticatedUser;
+import com.bosanci.recipesbackend.security.JwtService;
+import com.bosanci.recipesbackend.security.JwtService.IssuedToken;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +38,9 @@ public class AuthService {
     private static final String BAD_CREDENTIALS = "Pogrešno korisničko ime/e-pošta ili lozinka.";
 
     private final UserRepository userRepository;
+    private final RevokedTokenRepository revokedTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
     private final VerificationTokenService tokenService;
     private final EmailService emailService;
     private final UserMapper userMapper;
@@ -88,6 +97,36 @@ public class AuthService {
         return new MessageResponse("Ako postoji neaktiviran nalog sa tom e-poštom, poslali smo novi link.");
     }
 
+    @Transactional(readOnly = true)
+    public AuthResponse login(LoginRequest request) {
+        String identifier = request.usernameOrEmail().trim();
+        User user = (identifier.contains("@")
+                ? userRepository.findByEmailIgnoreCase(identifier)
+                : userRepository.findByUsernameIgnoreCase(identifier))
+                .orElse(null);
+
+        if (user == null) {
+            passwordEncoder.matches(request.password(), dummyHash);
+            throw new UnauthorizedException(BAD_CREDENTIALS);
+        }
+        if (!passwordEncoder.matches(request.password(), user.getPassword())) {
+            throw new UnauthorizedException(BAD_CREDENTIALS);
+        }
+        if (!user.isEnabled()) {
+            throw new ForbiddenException("Nalog još nije aktiviran. Proverite e-poštu ili zatražite novi link.");
+        }
+        return authResponse(user);
+    }
+
+    /** Stateless JWT cannot be "deleted", so its id is put on a block list until it would expire anyway. */
+    @Transactional
+    public void logout(AuthenticatedUser principal) {
+        LocalDateTime now = LocalDateTime.now();
+        revokedTokenRepository.deleteExpired(now);
+        revokedTokenRepository.save(new RevokedToken(principal.tokenId(),
+                LocalDateTime.ofInstant(principal.tokenExpiresAt(), ZoneId.systemDefault())));
+    }
+
     // ---------------------------------------------------------------- current user
 
     @Transactional(readOnly = true)
@@ -98,6 +137,11 @@ public class AuthService {
     }
 
     // ---------------------------------------------------------------- helpers
+
+    private AuthResponse authResponse(User user) {
+        IssuedToken issued = jwtService.issue(user);
+        return new AuthResponse(issued.token(), "Bearer", issued.expiresAt(), userMapper.toDto(user));
+    }
 
     private static String normalizeEmail(String email) {
         return email.trim().toLowerCase(Locale.ROOT);

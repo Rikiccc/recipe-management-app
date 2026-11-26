@@ -4,7 +4,37 @@
 .active { background: rgba(255, 255, 255, 0.15); }
 .menu-btn { display: none; }
 
+.user-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+
+  &.placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.username {
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 @media (max-width: 768px) {
-  .links, .auth-btn { display: none; }
+  .links, .auth-btn, .user-btn { display: none; }
   .menu-btn { display: inline-flex; }
 }
